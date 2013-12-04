@@ -1,0 +1,31 @@
+CROSS_HOST="x86_64-w64-mingw32"
+inherit cross
+
+NAME="mingw64-x86_64-editline"
+VERSION=2.07
+RELEASE=1
+CATEGORY="Devel"
+SUMMARY="BSD Editline library for Win64 toolchain"
+DESCRIPTION="MinGWEditLine is a BSD-licensed, open-source software aimed at
+implementing most of the functionality of the GNU Readline library in the
+framework of the native Windows Console."
+HOMEPAGE="http://mingweditline.sourceforge.net/"
+SRC_URI="mirror://sourceforge/mingweditline/mingweditline-${VERSION}.tar.bz2"
+SRC_DIR="mingweditline-${VERSION}"
+
+src_compile() {
+	lndirs
+	rm -fr ${B}/bin* ${B}/lib*
+	cd ${B}/src
+	cygmake CC=${CC} CFLAGS="${CFLAGS} -I." AR=${AR} STRIP=:
+}
+
+src_install() {
+	cd ${B}/src
+	cygmake install \
+		BINARY_PATH=${D}${CROSS_BINDIR} \
+		INCLUDE_PATH=${D}${CROSS_INCLUDEDIR} \
+		LIBRARY_PATH=${D}${CROSS_LIBDIR}
+
+	mv ${D}${CROSS_LIBDIR}/{,lib}edit.dll.a
+}
