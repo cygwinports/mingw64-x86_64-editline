@@ -28,4 +28,6 @@ src_install() {
 		LIBRARY_PATH=${D}${CROSS_LIBDIR}
 
 	mv ${D}${CROSS_LIBDIR}/{,lib}edit.dll.a
+
+	sed -i -e "s|${D}||g;s|\@LIBS\@||g" ${D}${CROSS_LIBDIR}/pkgconfig/libedit.pc
 }
