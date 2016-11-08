@@ -1,0 +1,36 @@
+--- origsrc/wineditline-2.101/CMakeLists.txt	2014-04-12 16:40:36.000000000 -0500
++++ src/wineditline-2.101/CMakeLists.txt	2016-11-07 21:30:26.577084400 -0600
+@@ -2,7 +2,7 @@ cmake_minimum_required (VERSION 2.6)
+ project (WinEditLine)
+ set (WinEditLine_VERSION_MAJOR 2)
+ set (WinEditLine_VERSION_MINOR 1)
+-if(NOT DEFINED LIB_SUFFIX)
++if(NOT DEFINED LIB_SUFFIX AND NOT MINGW)
+   if(CMAKE_SIZEOF_VOID_P MATCHES 4)
+     set(LIB_SUFFIX "32")
+   else()
+--- origsrc/wineditline-2.101/src/CMakeLists.txt	2014-04-12 16:40:36.000000000 -0500
++++ src/wineditline-2.101/src/CMakeLists.txt	2016-11-07 21:34:28.853968000 -0600
+@@ -3,6 +3,7 @@ include_directories("${PROJECT_BINARY_DI
+ include(GenerateExportHeader)
+ add_library(edit_static STATIC editline.c fn_complete.c history.c)
+ add_library(edit SHARED editline.c fn_complete.c history.c libedit.def)
++set_target_properties(edit_static PROPERTIES OUTPUT_NAME "edit")
+ set_target_properties(edit PROPERTIES PREFIX "")
+ GENERATE_EXPORT_HEADER(edit
+   BASE_NAME edit
+@@ -13,9 +14,10 @@ GENERATE_EXPORT_HEADER(edit
+ add_executable(edit_test libedit_test.c)
+ target_link_libraries(edit_test edit)
+ add_executable(edit_test_dll libedit_test_dll.c)
+-install (TARGETS edit edit_test edit_test_dll
+-  DESTINATION "${CMAKE_SOURCE_DIR}/bin${LIB_SUFFIX}")
++install (TARGETS edit
++  RUNTIME DESTINATION "bin${LIB_SUFFIX}"
++  ARCHIVE DESTINATION "lib${LIB_SUFFIX}")
+ install (TARGETS edit_static
+-  DESTINATION "${CMAKE_SOURCE_DIR}/lib${LIB_SUFFIX}")
++  DESTINATION "lib${LIB_SUFFIX}")
+ install (FILES editline/readline.h
+-  DESTINATION "${CMAKE_SOURCE_DIR}/include/editline")
++  DESTINATION "include/editline")
